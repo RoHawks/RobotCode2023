@@ -4,44 +4,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DutyCycle;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import universalSwerve.SwerveDrive;
-import universalSwerve.SwerveFactory;
-import universalSwerve.components.implementations.FalconTranslationSystem;
-import universalSwerve.components.implementations.SparkMaxUtilizingAbsoluteEncoderRotationSystemContinuously;
-import universalSwerve.utilities.PIDFConfiguration;
+import edu.wpi.first.wpilibj.XboxController;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
-
-import javax.management.RuntimeErrorException;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.revrobotics.SparkMaxPIDController;
-
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,14 +22,38 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
  * project.
  */
 public class Robot extends TimedRobot {
+  private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "My Auto";
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  private SwerveDrive mSwerveDrive;
+  private CANSparkMax[] mNeos;
+
+  private int[] mSparkMaxIds;
+  private int mCurrentSparkIdx;
+
+  private TalonFX mTalon;
   private XboxController mController;
 
-  public void robotInit()
-  {
-    mSwerveDrive= SwerveFactory.Create2023Swerve();
-    mController = new XboxController(0);
+
+  /**
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
+   */
+  @Override
+  public void robotInit() {
+    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
+
+
+    mCurrentSparkIdx = 0;
+    mSparkMaxIds = new int[] {0,4,15,18};
+
+    mTalon = new TalonFX(2);
+    mController = new XboxController(1);
+
+
   }
 
   /**
@@ -68,18 +64,7 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() 
-  {
-    
-  }
-
-  public void teleopPeriodic()
-  {
-    //mSwerveDrive.StandardSwerveDrive(mController.getLeftX(), mController.getLeftY(), , mController.getRightX());
-    mSwerveDrive.StandardSwerveDrive(mController.getLeftX(), mController.getLeftY(), mController.getRightTriggerAxis(), mController.getRightX());
-
-  }
-  
+  public void robotPeriodic() {}
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -93,19 +78,37 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_autoSelected = m_chooser.getSelected();
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    switch (m_autoSelected) {
+      case kCustomAuto:
+        // Put custom auto code here
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
+    }
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {
- 
-  } 
-    
+  public void teleopInit() {}
+
+  /** This function is called periodically during operator control. */
+  @Override
+  public void teleopPeriodic() {
+    if (mController.getAButton()){
+      mTalon.set(ControlMode.Velocity, 1200);
+    }
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
