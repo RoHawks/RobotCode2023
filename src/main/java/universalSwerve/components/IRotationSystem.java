@@ -20,5 +20,7 @@ public interface IRotationSystem
     Sets the target angle, see CoordinateSystem.txt for details
     */
     void SetAngle(double pTargetAngle);
+
+    void StopEverything();
     
 }

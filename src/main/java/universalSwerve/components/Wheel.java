@@ -2,6 +2,7 @@ package universalSwerve.components;
 import java.util.Hashtable;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import universalSwerve.utilities.AngleUtilities;
 import universalSwerve.utilities.Conversions;
 
 
@@ -12,6 +13,7 @@ public class Wheel
     private double mYOffsetFromCenter; //inches.  Negatives are behind the center of rotation, positives are in front of center of rotation
     private ITranslationSystem mTranslationSystem;
     private IRotationSystem mRotationSystem;
+    private double mTargetAngle;
 
     public Wheel(WheelLabel pLabel, double pXOffsetFromCenter, double pYOffsetFromCenter,
     ITranslationSystem pTranslationSystem, IRotationSystem pRotationSystem)
@@ -21,7 +23,7 @@ public class Wheel
         mYOffsetFromCenter = pYOffsetFromCenter;
         mTranslationSystem = pTranslationSystem;
         mRotationSystem = pRotationSystem;
-
+        mTargetAngle = 0;
 
     }
 
@@ -50,12 +52,23 @@ public class Wheel
         return mRotationSystem.GetRawCurrentAngle();
     }
 
+    public void SetToBreakMode()
+    {
+        mTranslationSystem.SetToBreakMode();
+    }
+
+    public void SetToCoastMode()
+    {
+        mTranslationSystem.SetToCoastMode();
+    }
+
 
     /*
     Sets the angle that we want the wheel to truly be pointing at, relative to the robot chassis.  If the wheel should be revesed it is already baked into this numer
     */
     public void SetWheelTargetAngle(double pAngle)
     {
+        mTargetAngle = pAngle;
         mRotationSystem.SetAngle(pAngle);
     }
 
@@ -69,6 +82,16 @@ public class Wheel
         mTranslationSystem.SetVelocity(pSpeed);
     }
 
+    public void StopEverything()
+    {
+        mRotationSystem.StopEverything();
+        mTranslationSystem.StopEverything();
+    }
+
+    public void StopTranslationButAllowWheelDirection()
+    {
+        mTranslationSystem.StopEverything();
+    }
 
     public Translation2d GetCenterToWheelTranslation()
     {
@@ -81,5 +104,29 @@ public class Wheel
         mTranslationSystem.Initialize();
     }
 
+    public boolean IsCloseToTargetAngle()
+    {
+        return AngleUtilities.AbsoluteDistanceBetweenAngles(mTargetAngle, mRotationSystem.GetCurrentAngle()) < 10;
+         
+    }
 
+    public double GetDistanceTravelled()
+    {
+        return mTranslationSystem.GetDistanceTravelled();
+    }
+
+    public void ResetDistanceTravelled()
+    {
+        mTranslationSystem.ResetDistanceTravelled();
+    }
+
+    public double GetPercentOutput()
+    {
+        return mTranslationSystem.GetPercentOutput();
+    }
+
+    public double GetVelocity()
+    {
+        return mTranslationSystem.GetVelocity();
+    }
 }

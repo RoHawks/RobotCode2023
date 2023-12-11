@@ -142,4 +142,9 @@ public abstract class SparkMaxAndAbsoluteEncoderRotationSystem implements IRotat
 		return targetEncoderPosition;
 	}
 
+	@Override
+    public void StopEverything() {
+        mSparkMax.set(0);
+        
+    }
 }

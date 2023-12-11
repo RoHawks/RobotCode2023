@@ -1,5 +1,7 @@
 package universalSwerve.components.implementations;
 
+import javax.swing.text.html.FormSubmitEvent.MethodType;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -34,7 +36,10 @@ public class FalconTranslationSystem implements ITranslationSystem{
 
         
     }
-
+    public void ResetDistanceTravelled()
+    {
+        ResetDriveEncodersToZero();
+    }
 
     public void ResetDriveEncodersToZero()
 	{
@@ -82,6 +87,15 @@ public class FalconTranslationSystem implements ITranslationSystem{
         return Conversions.RPMstoInchesPerSecond(wheelRPMs, mWheelDiameter);        
     }
 
+    public void SetToBreakMode()
+    {
+        mFalcon.setNeutralMode(NeutralMode.Brake);
+    }
+    public void SetToCoastMode()
+    {
+        mFalcon.setNeutralMode(NeutralMode.Coast);
+    }
+    
     private void InitializeFalconPID(PIDFConfiguration pPidfConfiguration)
     {
         mFalcon.config_kF(0, pPidfConfiguration.F());
@@ -90,5 +104,14 @@ public class FalconTranslationSystem implements ITranslationSystem{
         mFalcon.config_kD(0, pPidfConfiguration.D());
   
     }
+
+    public void StopEverything()
+    {
+        mFalcon.set(ControlMode.PercentOutput, 0);
+    }
   
+    public double GetPercentOutput()
+    {
+        return mFalcon.getMotorOutputPercent();
+    }
 }

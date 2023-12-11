@@ -84,6 +84,12 @@ public class SparkMaxUtilizingAbsoluteEncoderRotationSystemContinuously implemen
 		return ConvertEncoderUnitToOurAngle(mSparkMax.getEncoder().getPosition());
 	}
 
+    @Override
+    public void StopEverything() {
+        mSparkMax.set(0);
+        
+    }
+
 	
 
 

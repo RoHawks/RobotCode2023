@@ -370,7 +370,7 @@ public class RobotPrototype extends TimedRobot {
 
   public void RunSwerve()
   {
-    mSwerveDrive.StandardSwerveDrive(mController.getLeftX(), mController.getLeftY(), mController.getRightTriggerAxis(), mController.getRightX());
+    mSwerveDrive.StandardSwerveDrive(mController.getLeftX(), mController.getLeftY(), mController.getRightTriggerAxis(), mController.getRightX(), false, 180);
   }
 
   public void teleopPeriodic()

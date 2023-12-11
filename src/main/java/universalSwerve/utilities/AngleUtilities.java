@@ -2,6 +2,19 @@ package universalSwerve.utilities;
 
 public class AngleUtilities 
 {
+
+
+	public static double AbsoluteDistanceBetweenAngles(double pAngleA, double pAngleB)
+	{
+		double angleANormalized = Normalize(pAngleA);
+		double angleBNormalized = Normalize(pAngleB);
+		double greaterAngle = Math.max(angleANormalized, angleBNormalized);
+		double lesserAngle = Math.min(angleANormalized, angleBNormalized);
+		double distance1 = greaterAngle - lesserAngle;
+		double distance2 = 360 - greaterAngle + lesserAngle;
+		return Math.min(distance1, distance2);
+	}
+
     /*
         Takes and angle and brings it into the range [0, 360)
     */
